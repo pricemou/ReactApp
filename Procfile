@@ -1,1 +1,1 @@
-web: cd ReactApp.Server && dotnet ReactApp.Server.dll
+web: cd ReactApp.Server && dotnet bin\Debug\net8.0\ReactApp.Server.dll
