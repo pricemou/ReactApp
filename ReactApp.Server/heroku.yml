@@ -1,0 +1,8 @@
+build:
+  docker:
+    web: Dockerfile
+release:
+  command:
+    - dotnet ef database update
+run:
+  web: dotnet ReactApp.Server.dll

@@ -34,8 +34,16 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
     }
 }
 
-const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
-    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost:7181';
+// Détection de l’environnement
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Définition de l'URL du backend
+const target = isProduction
+    ? process.env.ASPNETCORE_HTTPS_PORT || `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` // URL de prod
+    : 'https://localhost:7181'; // URL en dev
+
+// const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
+//     env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost:7181';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -49,11 +57,11 @@ export default defineConfig({
         proxy: {
             '^/weatherforecast': {
                 target,
-                secure: false
+                secure: isProduction
             }
         },
-        port: 51574,
-        https: {
+        port: Number(process.env.PORT) || 51574,
+        https: isProduction ? undefined : {
             key: fs.readFileSync(keyFilePath),
             cert: fs.readFileSync(certFilePath),
         }

@@ -1,0 +1,1 @@
+web: cd ReactApp.Server && dotnet ReactApp.Server.dll
