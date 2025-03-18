@@ -11,8 +11,8 @@ using ReactApp.Server.Data;
 namespace ReactApp.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250302214918_authentification")]
-    partial class authentification
+    [Migration("20250312202446_intiliser")]
+    partial class intiliser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -85,6 +85,46 @@ namespace ReactApp.Server.Migrations
                     b.HasKey("id_utilisateur");
 
                     b.ToTable("Utilisateurs");
+                });
+
+            modelBuilder.Entity("ReactApp.Server.Data.VueUtilisateurActivites", b =>
+                {
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("id_decodeur")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("id_utilisateur")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("id_utilisateur");
+
+                    b.Property<string>("modele")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("mot_de_passe")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("nom_utilisateur")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("nombre_decodeurs")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("nombre_operations")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("numero_serie")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("Vue_Utilisateur_Activites", (string)null);
                 });
 #pragma warning restore 612, 618
         }

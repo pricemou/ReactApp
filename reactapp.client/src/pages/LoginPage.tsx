@@ -12,12 +12,17 @@ const LoginPage = () => {
    
     
     const handleLogin = async () => {
-        const response = await fetch('https://localhost:7181/api/auth/login', {
+        const raw = JSON.stringify({
+            "nomUtilisateur": "user_residence1",
+            "motDePasse": "residence789"
+          });
+        
+        const response = await fetch('http://localhost:5295/api/Auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email, password }),
+            body: raw,
         });
         
         if (response.ok) {
@@ -27,7 +32,7 @@ const LoginPage = () => {
             
             // Dispatcher l'action de connexion réussie
             dispatch(loginSuccess(data.token));
-            console.log(data.token);
+            console.log(data);
             navigate('/dashboard'); // Rediriger vers le tableau de bord
             
         } else {
