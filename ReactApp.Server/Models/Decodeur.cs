@@ -16,7 +16,7 @@ namespace ReactApp.Server.Models
             public DateTime? date_installation { get; set; }
             public DateTime? derniere_mise_a_jour { get; set; }
 
-        // Navigation property
+            // Navigation property
             public Client Client { get; set; }
         }
 

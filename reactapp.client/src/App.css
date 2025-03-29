@@ -1,11 +1,33 @@
-﻿#root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
-}
-
-th, td {
-    padding-left: 1rem;
-    padding-right: 1rem;
-}
+﻿.action-icon {
+    font-size: 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  /* Espacement entre les icônes */
+  .modify-icon {
+    color: #007bff; /* Couleur bleue pour l'icône de modification */
+    margin-right: 10px; /* Espacement entre les icônes */
+  }
+  
+  .delete-icon {
+    color: #e3342f; /* Couleur rouge pour l'icône de suppression */
+  }
+  
+  /* Effet de survol pour les icônes */
+  .action-icon:hover {
+    transform: scale(1.1); /* Augmenter légèrement la taille de l'icône */
+    opacity: 0.8; /* Ajout d'une opacité pour l'effet de survol */
+  }
+  
+  /* Changer la couleur de survol */
+  .modify-icon:hover {
+    color: #0056b3; /* Changer la couleur lorsque l'on survole l'icône de modification */
+  }
+  
+  .delete-icon:hover {
+    color: #c82333; /* Changer la couleur lorsque l'on survole l'icône de suppression */
+  }
+  

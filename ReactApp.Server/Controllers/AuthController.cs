@@ -127,7 +127,53 @@ namespace ReactApp.Server.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(AjouterUtilisateur), new { id = utilisateur.id_utilisateur }, utilisateur);
-        }   
+        }
+
+
+        [HttpGet("listes-utilisateurs-clients")]
+        public async Task<IActionResult> GetUtilisateursClients()
+        {
+            await _context.Database.ExecuteSqlRawAsync("PRAGMA journal_mode = WAL;"); // Optionnel, pour les performances
+
+            try
+            {
+                // Requête SQL pour récupérer les utilisateurs et leurs clients associés
+                var result = await (from u in _context.Utilisateurs
+                                    join uc in _context.UtilisateursClients on u.id_utilisateur equals uc.id_utilisateur
+                                    join c in _context.Clients on uc.id_client equals c.Id_Client
+                                    select new
+                                    {
+                                        // Informations de l'utilisateur
+                                        IdUtilisateur = u.id_utilisateur,
+                                        NomUtilisateur = u.nom_utilisateur,
+                                        EmailUtilisateur = u.email,
+                                        EstAdministrateur = u.est_administrateur,
+                                        DateCreationUtilisateur = u.date_creation,
+                                        DerniereConnexion = u.derniere_connexion,
+
+                                        // Informations du client associé à l'utilisateur
+                                        IdClient = c.Id_Client,
+                                        NomClient = c.Nom,
+                                        AdresseClient = c.Adresse,
+                                        TelephoneClient = c.Telephone,
+                                        EmailClient = c.Email,
+                                        DateInscriptionClient = c.Date_Inscription,
+                                        ActifClient = c.Actif
+                                    })
+                                    .ToListAsync();
+
+                if (result == null || result.Count == 0)
+                {
+                    return NotFound("Aucun utilisateur-client trouvé.");
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erreur lors de la récupération des données : {ex.Message}");
+            }
+        }
 
 
         [HttpPost("ajouter-utilisateur-client")]
@@ -163,7 +209,7 @@ namespace ReactApp.Server.Controllers
             return Ok("Utilisateur et client ajoutés avec succès.");
         }
 
-        [HttpPost("supprimer-utilisateur-client")]
+        [HttpDelete("supprimer-utilisateur-client")]
         public async Task<IActionResult> SupprimerUtilisateurClient([FromBody] SupprimerUtilisateurClientRequest request)
         {
             await _context.Database.ExecuteSqlRawAsync("PRAGMA journal_mode = WAL;"); // Optionnel, pour les performances
@@ -196,18 +242,20 @@ namespace ReactApp.Server.Controllers
                 // Vérification si la suppression a réussi
                 if (result > 0)
                 {
-                    return Ok("Utilisateur et client supprimés avec succès.");
+                      return Ok(new { success = true, message = "Utilisateur et client supprimés avec succès." });
                 }
                 else
                 {
-                    return Conflict("L'utilisateur ou le client n'a pas pu être supprimé.");
+                    return Conflict(new { success = false, message = "L'utilisateur ou le client n'a pas pu être supprimé." });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Erreur lors de la suppression des données : {ex.Message}");
+                return StatusCode(500, new { success = false, message = "Une erreur est survenue lors de la suppression." });
             }
         }
+
+
 
 
         [HttpGet("get-decodeurs/{idClient}")]
@@ -234,7 +282,29 @@ namespace ReactApp.Server.Controllers
         }
 
 
-        [HttpPost("create-client")]
+        [HttpGet("liste-decodeurs")]
+        public async Task<IActionResult> GetAllDecodeurs()
+        {
+            try
+            {
+                // Récupérer tous les décodeurs
+                var decodeurs = await _context.Decodeurs.ToListAsync();
+
+                if (decodeurs == null || decodeurs.Count == 0)
+                {
+                    return NotFound("Aucun décodeur trouvé.");
+                }
+
+                return Ok(decodeurs);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erreur lors de la récupération des décodeurs : {ex.Message}");
+            }
+        }
+
+
+        [HttpPost("creer-client")]
         public async Task<IActionResult> CreateClient([FromBody] CreateClientRequest request)
         {
             // Vérification si la requête est vide (si des données sont manquantes)
@@ -269,7 +339,7 @@ namespace ReactApp.Server.Controllers
                 _context.Clients.Add(client);
                 await _context.SaveChangesAsync();  // Sauvegarde les changements dans la base de données
 
-                return Ok($"Client {client.Nom} créé avec succès.");  // Retourne un message de succès
+                return Ok(new { message = $"Client {client.Nom} créé avec succès." });  // Retourne un message de succès
             }
             catch (Exception ex)
             {
@@ -279,7 +349,7 @@ namespace ReactApp.Server.Controllers
         }
 
 
-        [HttpPost("remove-decoder-from-client")]
+        [HttpDelete("supprimer-le-décodeur-du-client")]
         public async Task<IActionResult> RemoveDecoderFromClient([FromBody] RemoveDecoderRequest request)
         {
             // Vérifie si la requête est valide
@@ -365,7 +435,7 @@ namespace ReactApp.Server.Controllers
         }
 
 
-       [HttpPost("restart-decodeur")]
+       [HttpPost("redemarrer-decodeur")]
        public async Task<IActionResult> RestartDecodeur([FromBody] RestartDecodeurRequest request)
         {
             if (request.id_decodeur <= 0)   

@@ -10,9 +10,13 @@ namespace ReactApp.Server.Data
         [Column("id_utilisateur")]
         public int id_utilisateur { get; set; }
 
+        [Key]
         [Column("id_client")]
         public int id_client { get; set; }
+        
+        // Propriétés de navigation
     }
+
 
 
 }

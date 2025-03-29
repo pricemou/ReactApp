@@ -30,6 +30,8 @@ namespace ReactApp.Server.Data
         [Column("Actif")]
         public bool Actif { get; set; } = true;
 
+        // Propriété de navigation pour la relation avec Utilisateurs via UtilisateursClients
+
 
     }
 }

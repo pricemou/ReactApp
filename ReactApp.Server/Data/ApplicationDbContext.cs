@@ -23,6 +23,13 @@ namespace ReactApp.Server.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+             // Définir la clé primaire composite pour la table UtilisateursClients
+        modelBuilder.Entity<UtilisateursClients>()
+            .HasKey(uc => new { uc.id_utilisateur, uc.id_client });
+
+        // Définir les relations
+        
+
             modelBuilder.Entity<Client>()
                 .HasKey(c => c.Id_Client);
 
